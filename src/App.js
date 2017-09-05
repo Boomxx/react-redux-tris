@@ -23,6 +23,9 @@ class App extends Component {
         case 37:
           store.dispatch({ type: 'MOVE_LEFT' });
           break;
+        case 40:
+          store.dispatch({ type: 'MOVE_DOWN' });
+          break;
       }
     });
   }

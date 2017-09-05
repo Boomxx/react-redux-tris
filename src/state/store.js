@@ -1,5 +1,6 @@
 import { createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension'
+import Pieces from '../helpers/Pieces';
 
 const initialState = {
     board: (new Array(20)).fill((new Array(12)).fill(0)),
@@ -10,7 +11,7 @@ const initialState = {
     ],
     position: {
         x: 5,
-        y: 0
+        y: -2
     },
     pieceRequired: false
 }
@@ -29,49 +30,78 @@ const getBoardAfterInsert = ({ board, currentPiece, position: { x, y }}) => {
     return copyBoard;
 }
 
+const collides = (board, piece, nextPosition) => {
+    const {x, y} = nextPosition;
+    
+    for(let i = 0; i < piece.length; i++) {
+        for(let j = 0; j < piece[0].length; j++) {
+            if(y+i >=0 && piece[i][j] && board[y+i][x+j]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 const reducer = (state = initialState, action) => {
     switch(action.type) {
         case 'NEW_PIECE':
             const board = getBoardAfterInsert(state);
+            const nextPiece = action.payload;
 
             return {
                 board,
                 position: {
                     x: 5,
-                    y: 0
+                    y: -2
                 },
-                currentPiece: [
-                    [0,0,0],
-                    [0,1,0],
-                    [1,1,1]
-                ],
+                currentPiece: nextPiece,
                 pieceRequired: false
             }
-        case 'MOVE_DOWN':            
+        case 'MOVE_DOWN':
+        {
+            const nextPosition = {
+                x: state.position.x,
+                y: Math.min(state.position.y + 1, state.board.length - state.currentPiece.length)
+            };
+
+            const doesCollide = collides(state.board, state.currentPiece, nextPosition);
+
             return {
                 ...state,
-                position: {
-                    x: state.position.x,
-                    y: Math.min(state.position.y + 1, state.board.length - state.currentPiece.length)
-                },
-                pieceRequired: state.position.y >= 16
+                position: doesCollide ? state.position : nextPosition,
+                pieceRequired: doesCollide || nextPosition.y + state.currentPiece.length > state.board.length - 1
             };
+        }
         case 'MOVE_RIGHT':
-            return {
-                ...state,
-                position: {
-                    x: Math.min(state.position.x + 1, state.board[0].length - state.currentPiece[0].length),
-                    y: state.position.y
-                }
+        {
+            const nextPosition = {
+                x: Math.min(state.position.x + 1, state.board[0].length - state.currentPiece[0].length),
+                y: state.position.y
             };
-        case 'MOVE_LEFT':
+
+            const doesCollide = collides(state.board, state.currentPiece, nextPosition);
+
             return {
                 ...state,
-                position: {
-                    x: Math.max(0,state.position.x - 1),
-                    y: state.position.y
-                }
+                position: doesCollide ? state.position : nextPosition
+            };
+        }
+        case 'MOVE_LEFT':
+        {
+            const nextPosition = {
+                x: Math.max(0,state.position.x - 1),
+                y: state.position.y
+            };
+
+            const doesCollide = collides(state.board, state.currentPiece, nextPosition);
+
+            return {
+                ...state,
+                position: doesCollide ? state.position : nextPosition
             }
+        }
         default:
             return state;
     }

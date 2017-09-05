@@ -19,16 +19,21 @@ const style = {
 
 class Board extends Component {
     componentWillReceiveProps(nextProps) {
-        if(nextProps.pieceRequired) {
-            this.props.newPiece();
+        if(nextProps.pieceRequired && !this.props.pieceRequired) {
+            window.setTimeout(() => this.props.newPiece(), 1000); //TODO: get current interval
         }
     }
+    
     drawBoard() {
         const { position: {x,y}, board, currentPiece } = this.props;
         const displayBoard = board.map(row => row.slice(0));
 
         currentPiece.map((row,i) => row.map((_,j) => {
-            displayBoard[y+i][x+j] = currentPiece[i][j];         
+            const cell = currentPiece[i][j];
+
+            if(cell && y+i >= 0) {
+                displayBoard[y+i][x+j] = cell;
+            }         
         }));
 
         const className = (set) => classnames({ 'cell-set': set === 1});
