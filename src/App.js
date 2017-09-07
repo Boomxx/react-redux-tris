@@ -26,6 +26,9 @@ class App extends Component {
         case 40:
           store.dispatch({ type: 'MOVE_DOWN' });
           break;
+        case 38:
+          store.dispatch({ type: 'ROTATE' });
+          break;
       }
     });
   }
