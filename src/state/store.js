@@ -1,6 +1,7 @@
 import { createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension'
-import Pieces from '../helpers/Pieces';
+
+import * as types from './types';
 
 const initialState = {
     board: (new Array(20)).fill((new Array(12)).fill(0)),
@@ -13,7 +14,8 @@ const initialState = {
         x: 5,
         y: -2
     },
-    pieceRequired: false
+    pieceRequired: false,
+    hasCollided: false
 }
 
 const getBoardAfterInsert = ({ board, currentPiece, position: { x, y } }) => {
@@ -36,7 +38,9 @@ const collides = (board, piece, nextPosition) => {
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece[0].length; j++) {
             if (y + i >= 0 && piece[i][j]) {
-                if (board[y + i][x + j] || (x + j) >= board[0].length || (x + j) < 0) {
+                console.log('y+i',y+i);
+                console.log('board.length', board.length);
+                if ((y+i)>=board.length || board[y + i][x + j] || (x + j) >= board[0].length || (x + j) < 0) {
                     return true;
                 }
             }
@@ -48,7 +52,7 @@ const collides = (board, piece, nextPosition) => {
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case 'NEW_PIECE':
+        case types.NEW_PIECE:
             const board = getBoardAfterInsert(state);
             const nextPiece = action.payload;
 
@@ -61,7 +65,7 @@ const reducer = (state = initialState, action) => {
                 currentPiece: nextPiece,
                 pieceRequired: false
             }
-        case 'MOVE_DOWN':
+        case types.MOVE_DOWN:
             {
                 const nextPosition = {
                     x: state.position.x,
@@ -73,10 +77,10 @@ const reducer = (state = initialState, action) => {
                 return {
                     ...state,
                     position: doesCollide ? state.position : nextPosition,
-                    pieceRequired: doesCollide || nextPosition.y + state.currentPiece.length > state.board.length - 1
+                    pieceRequired: doesCollide
                 };
             }
-        case 'MOVE_RIGHT':
+        case types.MOVE_RIGHT:
             {
                 const nextPosition = {
                     x: state.position.x + 1,
@@ -87,10 +91,11 @@ const reducer = (state = initialState, action) => {
 
                 return {
                     ...state,
-                    position: doesCollide ? state.position : nextPosition
+                    position: doesCollide ? state.position : nextPosition,
+                    pieceRequired: false
                 };
             }
-        case 'MOVE_LEFT':
+        case types.MOVE_LEFT:
             {
                 const nextPosition = {
                     x: state.position.x - 1,
@@ -101,10 +106,11 @@ const reducer = (state = initialState, action) => {
 
                 return {
                     ...state,
-                    position: doesCollide ? state.position : nextPosition
+                    position: doesCollide ? state.position : nextPosition,
+                    pieceRequired: false
                 }
             }
-        case 'ROTATE':
+        case types.ROTATE:
             {
                 const rotatedPiece = state.currentPiece.map(row => row.slice(0));
 

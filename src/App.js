@@ -2,12 +2,8 @@ import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 
 import Board from './components/Board';
-
 import store from './state/store';
-
-store.subscribe(() => {
-  //console.log('dispatch');
-});
+import * as types from './state/types';
 
 window.setInterval(() => {
   store.dispatch({ type: 'MOVE_DOWN' });
@@ -18,16 +14,16 @@ class App extends Component {
     document.addEventListener('keydown', e => {
       switch(e.keyCode) {
         case 39:
-          store.dispatch({ type: 'MOVE_RIGHT' });
+          store.dispatch({ type: types.MOVE_RIGHT });
           break;
         case 37:
-          store.dispatch({ type: 'MOVE_LEFT' });
+          store.dispatch({ type: types.MOVE_LEFT });
           break;
         case 40:
-          store.dispatch({ type: 'MOVE_DOWN' });
+          store.dispatch({ type: types.MOVE_DOWN });
           break;
         case 38:
-          store.dispatch({ type: 'ROTATE' });
+          store.dispatch({ type: types.ROTATE });
           break;
       }
     });

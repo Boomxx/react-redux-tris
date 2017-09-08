@@ -19,8 +19,11 @@ const style = {
 
 class Board extends Component {
     componentWillReceiveProps(nextProps) {
-        if(nextProps.pieceRequired && !this.props.pieceRequired) {
+        /* if(nextProps.pieceRequired && !this.props.pieceRequired) {
             window.setTimeout(() => this.props.newPiece(), 1000); //TODO: get current interval
+        } */
+        if(nextProps.pieceRequired && !this.props.pieceRequired) {
+            this.props.newPiece();
         }
     }
     
