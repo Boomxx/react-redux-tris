@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
-import { Provider } from 'react-redux';
+import React, { Component } from "react";
+import { Provider } from "react-redux";
 
-import Board from './components/Board';
-import store from './state/store';
-import * as types from './state/types';
+import Board from "./components/Board";
+import store from "./state/store";
+import * as types from "./state/types";
 
 window.setInterval(() => {
-  store.dispatch({ type: 'MOVE_DOWN' });
-},1000);
+  store.dispatch({ type: "MOVE_DOWN" });
+}, 1000);
 
 class App extends Component {
   componentWillMount() {
-    document.addEventListener('keydown', e => {
-      switch(e.keyCode) {
+    document.addEventListener("keydown", e => {
+      switch (e.keyCode) {
         case 39:
           store.dispatch({ type: types.MOVE_RIGHT });
           break;
