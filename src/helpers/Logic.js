@@ -9,6 +9,6 @@ export const clearLines = board => {
 
   rowsToClear.map(i => {
     board.splice(i, 1);
-    board.unshift(new Array(12).fill(0));
+    board.unshift(new Array(board[0].length).fill(0));
   });
 };
