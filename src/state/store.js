@@ -68,6 +68,32 @@ const reducer = (state = initialState, action) => {
         currentPiece: nextPiece,
         pieceRequired: false
       };
+    case types.FORCE_DROP: {
+      const nextPosition = {
+        x: state.position.x,
+        y: state.position.y + 1
+      };
+
+      const doesCollide = collides(
+        state.board,
+        state.currentPiece,
+        nextPosition
+      );
+
+      while (!doesCollide) {
+        nextPosition.y += 1;
+        doesCollide = collides(state.board, state.currentPiece, nextPosition);
+      }
+
+      return {
+        ...state,
+        position: {
+          x: state.position.x,
+          y: nextPosition.y - 1
+        },
+        pieceRequired: true
+      };
+    }
     case types.MOVE_DOWN: {
       const nextPosition = {
         x: state.position.x,
@@ -123,7 +149,7 @@ const reducer = (state = initialState, action) => {
       };
     }
     case types.ROTATE: {
-      const rotatedPiece = state.currentPiece.map(row => row.slice(0));
+      let rotatedPiece = state.currentPiece.map(row => row.slice(0));
 
       rotatedPiece = rotatedPiece[0].map((_, i) =>
         rotatedPiece.map(row => row[i]).reverse()

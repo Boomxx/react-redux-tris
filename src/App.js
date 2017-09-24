@@ -25,6 +25,10 @@ class App extends Component {
         case 38:
           store.dispatch({ type: types.ROTATE });
           break;
+        case 32:
+          store.dispatch({ type: types.FORCE_DROP });
+        default:
+          break;
       }
     });
   }
