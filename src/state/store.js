@@ -5,8 +5,8 @@ import { clearLines } from "../helpers/Logic";
 import * as types from "./types";
 
 const initialState = {
+  gameRunning: false,
   board: new Array(20).fill(new Array(12).fill(0)),
-  currentPiece: [[0, 0, 0], [0, 1, 0], [1, 1, 1]],
   position: {
     x: 5,
     y: -2
@@ -52,14 +52,28 @@ const collides = (board, piece, nextPosition) => {
   return false;
 };
 
+const mainReducer = (state = initialState, action) => {
+  if (action.type === types.START_GAME || state.gameRunning) {
+    return reducer(state, action);
+  }
+};
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+    case types.START_GAME:
+      return {
+        ...initialState,
+        gameRunning: true,
+        currentPiece: action.payload.currentPiece,
+        nextPiece: action.payload.nextPiece
+      };
     case types.NEW_PIECE:
       const board = getBoardAfterInsert(state);
       const nextPiece = action.payload;
       clearLines(board);
 
       return {
+        ...state,
         board,
         position: {
           x: 5,
@@ -167,4 +181,4 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-export default createStore(reducer, composeWithDevTools());
+export default createStore(mainReducer, composeWithDevTools());

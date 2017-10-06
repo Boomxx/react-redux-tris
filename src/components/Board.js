@@ -56,7 +56,15 @@ class Board extends Component {
   }
 
   render() {
-    return <div>{this.drawBoard()}</div>;
+    if (this.props.gameRunning) {
+      return <div>{this.drawBoard()}</div>;
+    } else {
+      return (
+        <div>
+          <button onClick={() => this.props.startGame()}>Start</button>
+        </div>
+      );
+    }
   }
 }
 
